@@ -897,6 +897,10 @@ function updateProgress() {
 // =========================================================
 // VALIDATION — strict: every question required
 // =========================================================
+function normalizeEmail(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
 function validateForm() {
   const errors = {
     info: [],
@@ -919,8 +923,10 @@ function validateForm() {
   const name = document.getElementById("name").value.trim();
   const school = document.getElementById("school").value.trim();
   const exam = document.getElementById("exam-date").value;
-  const email = document.getElementById("email").value.trim();
+  const emailEl = document.getElementById("email");
+  const email = normalizeEmail(emailEl.value);
   const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  emailEl.value = email;
 
   if (!name) { markFieldError("name"); errors.info.push("Name"); }
   if (!school) { markFieldError("school"); errors.info.push("School"); }
@@ -1018,7 +1024,7 @@ async function calculateResults() {
   const name = document.getElementById("name").value.trim();
   const school = document.getElementById("school").value.trim();
   const exam = document.getElementById("exam-date").value;
-  const email = document.getElementById("email").value.trim();
+  const email = normalizeEmail(document.getElementById("email").value);
 
   const rawScenario = {};
   scenarioQuestions.forEach((_, i) => {
