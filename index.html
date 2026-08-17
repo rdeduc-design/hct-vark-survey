@@ -21,8 +21,7 @@
     .workspace{padding:24px 26px 18px;display:flex;flex-direction:column;min-width:0}.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.toolbar h1{font-size:20px;margin:0;letter-spacing:-.02em}.mode-tabs{display:flex;background:#e8eeeb;padding:3px;border-radius:9px}.mode-tabs button{border:0;background:transparent;padding:7px 13px;border-radius:7px;color:#708184;font-size:11px;font-weight:700}.mode-tabs .selected{background:#fff;color:var(--teal);box-shadow:0 2px 8px #cdd8d5}
     .viewport{position:relative;overflow:hidden;flex:1;min-height:500px;border-radius:18px;background:radial-gradient(circle at 48% 38%,#f7e3d6 0 18%,#eecdbb 34%,#c3ddd4 74%,#a9cec4);box-shadow:var(--shadow)}
     .grid{position:absolute;inset:0;opacity:.13;background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:34px 34px}
-    .anatomy{position:absolute;inset:10% 12% 5%;display:grid;place-items:center}.pelvis{position:relative;width:min(440px,68%);aspect-ratio:1.1;background:rgba(255,250,245,.64);border:2px solid rgba(255,255,255,.8);border-radius:48% 48% 42% 42%;box-shadow:inset 0 0 55px rgba(121,68,55,.15),0 30px 60px rgba(41,87,82,.15)}.canal{position:absolute;left:40%;top:25%;width:21%;height:54%;border-radius:50% 50% 44% 44%;background:linear-gradient(90deg,#d88e83,#f4b5a9 48%,#cf7e74);transform:rotate(7deg);box-shadow:inset 0 0 18px #a85e5b}.cervix{position:absolute;left:43%;top:20%;width:19%;height:16%;border-radius:50%;background:#e7a197;border:7px solid #c67570;box-shadow:0 7px 18px #a75d5b66}.cervix:after{content:"";position:absolute;width:24%;height:8%;border-radius:50%;background:#884e51;left:38%;top:47%}
-    .finger{position:absolute;z-index:4;left:48%;top:58%;width:46px;height:210px;border-radius:25px;background:linear-gradient(90deg,#c9e9e5,#f4fffd 48%,#afd9d3);border:1px solid #8fc7bf;transform-origin:50% 100%;transform:rotate(-2deg);box-shadow:-8px 12px 25px #315f5955;transition:.18s}.finger:after{content:"";position:absolute;inset:8px 6px auto;height:18px;border-top:2px solid #85bdb6;border-radius:50%}.hand{position:absolute;z-index:3;left:43%;top:77%;width:140px;height:110px;border-radius:48% 48% 20% 20%;background:linear-gradient(110deg,#b9e0db,#effcf9);transform:rotate(-4deg);box-shadow:0 12px 25px #315f5944}
+    #scene{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}.scene-fallback{position:absolute;inset:0;display:grid;place-items:center;color:#315f59;font-weight:700;background:#d8ebe5}.scene-fallback small{display:block;font-weight:500;margin-top:6px}
     .label{position:absolute;font-size:11px;font-weight:800;color:#235058;background:#ffffffde;border:1px solid #fff;border-radius:7px;padding:6px 9px;box-shadow:0 6px 20px #375c5633}.label:after{content:"";position:absolute;height:1px;background:#fff;width:45px}.label-cervix{left:67%;top:26%}.label-cervix:after{right:100%;top:50%}.label-canal{left:68%;top:52%}.label-canal:after{right:100%;top:50%}
     .top-actions{position:absolute;top:16px;left:16px;display:flex;gap:8px}.chip{border:1px solid #ffffff99;background:#ffffffd9;color:#355b60;border-radius:8px;padding:7px 10px;font-size:11px;font-weight:750;backdrop-filter:blur(8px)}.chip.on{background:var(--teal);border-color:var(--teal);color:#fff}
     .patient{position:absolute;top:16px;right:16px;width:215px;background:#17383be8;color:#fff;border-radius:13px;padding:14px;box-shadow:0 15px 30px #15393c33}.patient-head{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:800}.comfort{display:flex;gap:4px}.comfort i{width:18px;height:5px;border-radius:5px;background:#56c9a5}.patient p{margin:9px 0 0;font-size:11px;color:#d6e8e5;line-height:1.45}
@@ -53,16 +52,16 @@
       <div class="toolbar"><div><h1>Internal examination</h1><div class="case-sub">Navigate gently toward the cervix while monitoring comfort.</div></div><div class="mode-tabs" role="tablist"><button class="selected">Learning</button><button>Practice</button><button>Assessment</button></div></div>
       <div class="viewport" id="viewport">
         <div class="grid"></div><div class="top-actions"><button class="chip on" id="cutaway">◉ Cutaway</button><button class="chip on" id="labels">⌖ Labels on</button></div>
-        <div class="anatomy"><div class="pelvis"><div class="canal"></div><div class="cervix"></div><div class="hand"></div><div class="finger" id="finger"></div><span class="label label-cervix">Cervix</span><span class="label label-canal">Vaginal canal</span></div></div>
+        <div class="scene-fallback" id="scene-fallback"><span>Loading interactive 3D anatomy…<small>Drag to orbit · scroll to zoom</small></span></div><canvas id="scene" aria-label="Interactive three-dimensional pelvic anatomy and gloved examining hand"></canvas><span class="label label-cervix">Cervix</span><span class="label label-canal">Vaginal canal</span>
         <div class="patient"><div class="patient-head"><span>Patient comfort</span><span class="comfort"><i></i><i></i><i></i><i></i><i></i></span></div><p id="patient-text">“I’m comfortable. Please continue slowly.”</p></div>
         <div class="pressure-card"><div class="pressure-title"><span>PALPATION PRESSURE</span><b id="pressure-value">1.3 N</b></div><div class="meter"><span id="meter-fill"></span></div><div class="meter-labels"><span>Gentle</span><span>3.5 N limit</span></div></div>
       </div>
-      <div class="controls"><span class="key"><b>W S</b> depth</span><span class="key"><b>A D</b> direction</span><span class="key"><b>Q E</b> rotate</span><span class="key"><b>↑ ↓</b> pressure</span><span class="key"><b>Space</b> pause</span></div>
+      <div class="controls"><span class="key"><b>W S</b> depth</span><span class="key"><b>A D</b> direction</span><span class="key"><b>Q E</b> rotate</span><span class="key"><b>↑ ↓</b> pressure</span><span class="key"><b>Drag</b> orbit 3D</span></div>
     </section>
     <section class="panel">
       <h2>Learning objectives</h2><div class="panel-intro">Complete each safely. Technique and communication are scored together.</div>
       <div class="goal done"><span class="goal-check">✓</span><div><b>Confirm patient readiness</b><p>Consent confirmed · chaperone offered</p></div></div>
-      <div class="goal active"><span class="goal-check">2</span><div><b>Advance with safe orientation</b><p>Maintain gentle pressure and follow the anatomical canal.</p></div></div>
+      <div class="goal active"><span class="goal-check">2</span><div><b>Advance index & middle fingers</b><p>Maintain gentle pressure and follow the anatomical canal.</p></div></div>
       <div class="goal"><span class="goal-check">3</span><div><b>Locate the cervix</b><p>Identify the landmark only when you are confident.</p></div></div>
       <div class="goal"><span class="goal-check">4</span><div><b>Communicate throughout</b><p>Warn before movement and respond to discomfort.</p></div></div>
       <div class="dialogue"><label>COMMUNICATE WITH MAYA</label><button data-say="Thank you for telling me. I’ll continue slowly.">“I’m going to move slightly deeper now.”</button><button data-say="Yes, I’m still comfortable.">“Are you still comfortable?”</button><button data-say="Okay, thank you for stopping.">“We can stop at any time.”</button></div>
@@ -70,16 +69,44 @@
     </section>
   </main>
 </div><div class="toast" id="toast" role="status"></div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 <script>
-  const finger=document.querySelector('#finger'), meter=document.querySelector('#meter-fill'), value=document.querySelector('#pressure-value'), patient=document.querySelector('#patient-text'), toast=document.querySelector('#toast');
-  let x=0,y=0,r=-2,p=1.3,stopped=false;
-  function draw(){finger.style.transform=`translate(${x}px,${y}px) rotate(${r}deg)`;meter.style.width=`${Math.min(100,p/3.5*100)}%`;value.textContent=p.toFixed(1)+' N';patient.textContent=p>3.5?'“That pressure is uncomfortable. Please stop.”':'“I’m comfortable. Please continue slowly.”';meter.style.background=p>3.5?'#d95843':'linear-gradient(90deg,#34a88d,#e3ad41)'}
-  addEventListener('keydown',e=>{if(stopped)return; const k=e.key.toLowerCase();if(k==='w')y-=5;if(k==='s')y+=5;if(k==='a')x-=5;if(k==='d')x+=5;if(k==='q')r-=3;if(k==='e')r+=3;if(e.key==='ArrowUp')p=Math.min(4.5,p+.2);if(e.key==='ArrowDown')p=Math.max(0,p-.2);if(e.code==='Space'){e.preventDefault();show('Simulation paused')};draw()});
+  const meter=document.querySelector('#meter-fill'), value=document.querySelector('#pressure-value'), patient=document.querySelector('#patient-text'), toast=document.querySelector('#toast');
+  let lateral=0,depth=0,rotation=0,p=1.3,stopped=false,examHand=null,renderer=null,scene=null,camera=null,controls=null;
+  function capsule(radius,length,material){const g=new THREE.CapsuleGeometry(radius,length,10,24);const m=new THREE.Mesh(g,material);m.castShadow=true;m.receiveShadow=true;return m}
+  function init3D(){
+    if(!window.THREE){document.querySelector('#scene-fallback span').innerHTML='3D anatomy unavailable<small>Check your connection and reload the simulator.</small>';return}
+    const canvas=document.querySelector('#scene');scene=new THREE.Scene();scene.background=new THREE.Color(0xc3ddd4);scene.fog=new THREE.Fog(0xc3ddd4,12,25);
+    camera=new THREE.PerspectiveCamera(38,1,.1,100);camera.position.set(7,3.8,10);
+    renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;
+    scene.add(new THREE.HemisphereLight(0xfff8ef,0x365d5b,2.1));const key=new THREE.DirectionalLight(0xffeadb,3.4);key.position.set(5,8,7);key.castShadow=true;scene.add(key);const rim=new THREE.PointLight(0x8de2d5,2,18);rim.position.set(-6,2,3);scene.add(rim);
+    const anatomy=new THREE.Group();anatomy.rotation.x=-.12;scene.add(anatomy);
+    const tissue=new THREE.MeshPhysicalMaterial({color:0xd98682,roughness:.72,clearcoat:.15,side:THREE.DoubleSide,transparent:true,opacity:.86});
+    const deep=new THREE.MeshPhysicalMaterial({color:0x9b4e58,roughness:.8,side:THREE.DoubleSide});
+    const organ=new THREE.MeshPhysicalMaterial({color:0xe6a19a,roughness:.68,clearcoat:.2});
+    const bone=new THREE.MeshPhysicalMaterial({color:0xf1ded0,roughness:.9,transparent:true,opacity:.63,side:THREE.DoubleSide});
+    const canal=new THREE.Mesh(new THREE.CylinderGeometry(.75,1.05,5.2,48,8,true),tissue);canal.rotation.x=Math.PI/2;canal.position.z=.2;anatomy.add(canal);
+    const canalOpening=new THREE.Mesh(new THREE.TorusGeometry(1.03,.17,16,48),tissue);canalOpening.position.z=2.8;anatomy.add(canalOpening);
+    const cervix=new THREE.Mesh(new THREE.TorusGeometry(.72,.28,24,60),organ);cervix.position.z=-2.38;cervix.scale.y=.78;anatomy.add(cervix);const os=new THREE.Mesh(new THREE.SphereGeometry(.23,24,16),deep);os.position.z=-2.35;os.scale.y=.35;anatomy.add(os);
+    const uterus=new THREE.Mesh(new THREE.SphereGeometry(1.45,48,32),organ);uterus.scale.set(1,1.25,.72);uterus.position.set(0,.75,-3.65);anatomy.add(uterus);
+    const pelvis=new THREE.Mesh(new THREE.TorusGeometry(3.25,.48,24,80,Math.PI*1.55),bone);pelvis.rotation.z=.7;pelvis.scale.y=.82;pelvis.position.z=-.8;anatomy.add(pelvis);
+    const pelvicFloor=new THREE.Mesh(new THREE.TorusGeometry(1.8,.22,16,64),bone);pelvicFloor.rotation.x=Math.PI/2;pelvicFloor.position.z=1.6;anatomy.add(pelvicFloor);
+    examHand=new THREE.Group();const glove=new THREE.MeshPhysicalMaterial({color:0xc6eee8,roughness:.35,clearcoat:.4});const palm=capsule(1.05,1.6,glove);palm.rotation.x=Math.PI/2;palm.scale.x=.78;examHand.add(palm);
+    const fingerX=[-.72,-.25,.22,.66],lengths=[1.35,2.5,2.7,1.55];fingerX.forEach((x,i)=>{const f=capsule(.25,lengths[i],glove);f.position.set(x,.16,-1.25-lengths[i]/2);f.rotation.x=Math.PI/2;examHand.add(f)});
+    const thumb=capsule(.3,1.25,glove);thumb.rotation.set(Math.PI/2,0,-.65);thumb.position.set(-1.05,-.08,.15);examHand.add(thumb);examHand.position.set(0,-.25,5.45);anatomy.add(examHand);
+    const floor=new THREE.Mesh(new THREE.CircleGeometry(12,64),new THREE.MeshStandardMaterial({color:0xa7cec4,roughness:1}));floor.rotation.x=-Math.PI/2;floor.position.y=-3.5;floor.receiveShadow=true;scene.add(floor);
+    let yaw=.6,pitch=.24,distance=12,drag=false,px=0,py=0;const orbit=()=>{camera.position.set(Math.sin(yaw)*Math.cos(pitch)*distance,Math.sin(pitch)*distance,Math.cos(yaw)*Math.cos(pitch)*distance-.4);camera.lookAt(0,0,-.4)};orbit();
+    canvas.addEventListener('pointerdown',e=>{drag=true;px=e.clientX;py=e.clientY;canvas.setPointerCapture(e.pointerId)});canvas.addEventListener('pointerup',()=>drag=false);canvas.addEventListener('pointermove',e=>{if(!drag)return;yaw-=(e.clientX-px)*.008;pitch=Math.max(-.25,Math.min(1.1,pitch+(e.clientY-py)*.006));px=e.clientX;py=e.clientY;orbit()});canvas.addEventListener('wheel',e=>{e.preventDefault();distance=Math.max(7,Math.min(18,distance+e.deltaY*.01));orbit()},{passive:false});
+    document.querySelector('#scene-fallback').style.display='none';resize();addEventListener('resize',resize);renderer.setAnimationLoop(()=>renderer.render(scene,camera));
+  }
+  function resize(){if(!renderer)return;const c=renderer.domElement,w=c.clientWidth,h=c.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
+  function draw(){if(examHand){examHand.position.x=lateral;examHand.position.z=5.45-depth;examHand.rotation.z=rotation}meter.style.width=`${Math.min(100,p/3.5*100)}%`;value.textContent=p.toFixed(1)+' N';patient.textContent=p>3.5?'“That pressure is uncomfortable. Please stop.”':'“I’m comfortable. Please continue slowly.”';meter.style.background=p>3.5?'#d95843':'linear-gradient(90deg,#34a88d,#e3ad41)'}
+  addEventListener('keydown',e=>{if(stopped)return;const k=e.key.toLowerCase();if(k==='w')depth=Math.min(4.7,depth+.12);if(k==='s')depth=Math.max(0,depth-.12);if(k==='a')lateral=Math.max(-.65,lateral-.08);if(k==='d')lateral=Math.min(.65,lateral+.08);if(k==='q')rotation-=.04;if(k==='e')rotation+=.04;if(e.key==='ArrowUp')p=Math.min(4.5,p+.2);if(e.key==='ArrowDown')p=Math.max(0,p-.2);draw()});
   document.querySelectorAll('.mode-tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.mode-tabs button').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');document.querySelectorAll('.label').forEach(l=>l.style.display=b.textContent==='Learning'?'block':'none');show(b.textContent+' mode enabled')});
   document.querySelector('#labels').onclick=e=>{e.currentTarget.classList.toggle('on');const on=e.currentTarget.classList.contains('on');document.querySelectorAll('.label').forEach(l=>l.style.display=on?'block':'none');e.currentTarget.textContent=on?'⌖ Labels on':'⌖ Labels off'};
   document.querySelectorAll('[data-say]').forEach(b=>b.onclick=()=>{patient.textContent='“'+b.dataset.say+'”';show('Communication step recorded')});
   document.querySelector('#stop').onclick=()=>{stopped=true;patient.textContent='“Thank you for stopping.”';show('Examination stopped — patient request respected')};
   document.querySelector('#identify').onclick=()=>show(p<=3.5?'Landmark identified · safe pressure maintained':'Reduce pressure before identifying the landmark');
-  function show(t){toast.textContent=t;toast.classList.add('show');clearTimeout(window.tt);window.tt=setTimeout(()=>toast.classList.remove('show'),2400)} draw();
+  function show(t){toast.textContent=t;toast.classList.add('show');clearTimeout(window.tt);window.tt=setTimeout(()=>toast.classList.remove('show'),2400)} init3D();draw();
 </script>
 </body></html>
